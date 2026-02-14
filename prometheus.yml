@@ -1,0 +1,72 @@
+# ==============================================================================
+# PROMETHEUS CONFIGURATION - NODE HEALTH MONITOR
+# Maintainer: CryptoAI Jedi
+# Description: Centralized scraping config for Blockchain & Infrastructure Ops
+# ==============================================================================
+
+global:
+  scrape_interval: 15s     # Scrape targets every 15 seconds (Standard for Ops)
+  evaluation_interval: 15s # Evaluate rules every 15 seconds
+  scrape_timeout: 10s      # Timeout for scraping targets
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "alerts/node_alerts.yml"  # TODO: Add alert rules for High CPU, Low Peers, Block Lag
+
+scrape_configs:
+
+  # ----------------------------------------------------------------------------
+  # JOB: PROMETHEUS (Self-Monitoring)
+  # ----------------------------------------------------------------------------
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # ----------------------------------------------------------------------------
+  # JOB: SYSTEM METRICS (Node Exporter)
+  # Description: CPU, RAM, Disk I/O, Network Traffic
+  # Port: 9100 (Default)
+  # ----------------------------------------------------------------------------
+  - job_name: 'system_metrics'
+    scrape_interval: 10s  # Higher frequency for system stats
+    static_configs:
+      - targets: ['localhost:9100']
+        labels:
+          env: 'production'
+          type: 'bare-metal'
+
+  # ----------------------------------------------------------------------------
+  # JOB: BITCOIN CORE (via bitcoin-prometheus-exporter)
+  # Description: Block height, Peer count, Mempool size, Chainwork
+  # Port: 9332 (Common for jvstein/bitcoin-prometheus-exporter)
+  # ----------------------------------------------------------------------------
+  - job_name: 'bitcoin_node'
+    scrape_interval: 30s  # Block time is 10m, so 30s is plenty
+    static_configs:
+      - targets: ['localhost:9332']
+        labels:
+          chain: 'mainnet'
+          client: 'bitcoind'
+
+  # ----------------------------------------------------------------------------
+  # JOB: MONERO NODE (via monero-exporter)
+  # Description: Hashrate, Sync Status, Difficulty
+  # Port: 9000 (Common custom exporter port)
+  # ----------------------------------------------------------------------------
+  - job_name: 'monero_node'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['localhost:9000']
+        labels:
+          chain: 'mainnet'
+          client: 'monerod'
+
+  # ----------------------------------------------------------------------------
+  # JOB: ASIC MINING FLEET (Aggregated)
+  # Description: Scrapes the custom Python gateway that aggregates ASIC stats
+  # ----------------------------------------------------------------------------
+  - job_name: 'asic_fleet_gateway'
+    scrape_interval: 60s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['localhost:8000'] # Your Python script running as a service
