@@ -60,9 +60,9 @@ This project provides a containerized observability solution for tracking the he
 - docker-compose.yml: Orchestrates the service mesh and networking.
 
 **Future Roadmap**
-Add Alertmanager for Slack/Discord notifications on peer drop.
-Integrate ASIC mining fleet stats via custom Python gateway.
-Create a unified "Ops Center" dashboard panel.
+- Add Alertmanager for Slack/Discord notifications on peer drop.
+- Integrate ASIC mining fleet stats via custom Python gateway.
+- Create a unified "Ops Center" dashboard panel.
 
 ---
 
