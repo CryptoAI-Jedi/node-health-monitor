@@ -1,0 +1,1 @@
+This configuration uses a 15s global scrape interval to balance resolution with storage costs. It separates 'System Metrics' (CPU/RAM) from 'Chain Metrics' (Block Height) to optimize load, as blockchain states change slower than system resources.
