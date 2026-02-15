@@ -33,35 +33,30 @@ scrape_configs:
           type: 'bare-metal'
 
   # ----
-  # JOB: BITCOIN BLOCK HEIGHT (Lightweight Custom Exporter)
-  # Description: Pulls live block height from blockchain.info API
+  # JOB: BITCOIN CORE (via bitcoin-prometheus-exporter)
   # ----
-  - job_name: 'btc_exporter'
-    scrape_interval: 60s
+  - job_name: 'bitcoin_node'
+    scrape_interval: 30s
     static_configs:
-      - targets: ['btc-exporter:9101']
+      - targets: ['bitcoin-exporter:9332']
         labels:
           chain: 'mainnet'
+          client: 'bitcoind'
 
   # ----
-  # TODO: Future Jobs (uncomment when services are deployed)
+  # JOB: MONERO NODE (via monero-exporter)
   # ----
-  # - job_name: 'bitcoin_node'
-  #   scrape_interval: 30s
-  #   static_configs:
-  #     - targets: ['bitcoind-exporter:9332']
-  #       labels:
-  #         chain: 'mainnet'
-  #         client: 'bitcoind'
+  - job_name: 'monero_node'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['monero-exporter:9000']
+        labels:
+          chain: 'mainnet'
+          client: 'monerod'
 
-  # - job_name: 'monero_node'
-  #   scrape_interval: 30s
-  #   static_configs:
-  #     - targets: ['monero-exporter:9000']
-  #       labels:
-  #         chain: 'mainnet'
-  #         client: 'monerod'
-
+  # ----
+  # TODO: Future Jobs
+  # ----
   # - job_name: 'asic_fleet_gateway'
   #   scrape_interval: 60s
   #   metrics_path: '/metrics'

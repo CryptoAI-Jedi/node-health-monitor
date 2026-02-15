@@ -38,5 +38,34 @@ services:
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
     restart: unless-stopped
 
+  bitcoin-exporter:
+    image: jvstein/bitcoin-prometheus-exporter:latest
+    container_name: bitcoin-exporter
+    environment:
+      - BITCOIN_RPC_HOST=host-gateway
+      - BITCOIN_RPC_PORT=8332
+      - BITCOIN_RPC_USER=liberty
+      - BITCOIN_RPC_PASSWORD=BTCtobefree!
+    ports:
+      - "9332:9332"
+    extra_hosts:
+      - "host-gateway:host-gateway"
+    restart: unless-stopped
+
+  monero-exporter:
+    image: vdo1138/monero-exporter:0.0.2
+    container_name: monero-exporter
+    command:
+      - '--monero-addr=http://host-gateway:18081'
+    ports:
+      - "9000:9000"
+    extra_hosts:
+      - "host-gateway:host-gateway"
+    restart: unless-stopped
+
 volumes:
   grafana-data:
+
+networks:
+  monitoring:
+    driver: bridge
