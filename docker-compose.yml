@@ -16,8 +16,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER:-admin}
+      # No default password on purpose (forces you to set it in .env)
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
     volumes:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
@@ -32,20 +33,20 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--path.rootfs=/rootfs'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/rootfs"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
     restart: unless-stopped
 
   bitcoin-exporter:
     image: jvstein/bitcoin-prometheus-exporter:latest
     container_name: bitcoin-exporter
     environment:
-      - BITCOIN_RPC_HOST=host-gateway
-      - BITCOIN_RPC_PORT=8332
-      - BITCOIN_RPC_USER=liberty
-      - BITCOIN_RPC_PASSWORD=BTCtobefree!
+      BITCOIN_RPC_HOST: ${BITCOIN_RPC_HOST:-host-gateway}
+      BITCOIN_RPC_PORT: ${BITCOIN_RPC_PORT:-8332}
+      BITCOIN_RPC_USER: ${BITCOIN_RPC_USER}
+      BITCOIN_RPC_PASSWORD: ${BITCOIN_RPC_PASSWORD}
     ports:
       - "9332:9332"
     extra_hosts:
@@ -56,11 +57,11 @@ services:
     image: vdo1138/monero-exporter:0.0.2
     container_name: monero-exporter
     command:
-      - '--monero-addr=http://host-gateway:18081'
+      - "--monero-addr=${MONERO_RPC_URL:-http://host-gateway:18081}"
     ports:
       - "9000:9000"
     extra_hosts:
-      - "host-gateway:host-gateway"
+      - "host.gateway.internal:host-gateway"
     restart: unless-stopped
 
 volumes:
