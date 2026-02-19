@@ -64,6 +64,10 @@ services:
       - "host.gateway.internal:host-gateway"
     restart: unless-stopped
 
+  app:
+    env_file:
+        - .env
+
 volumes:
   grafana-data:
 
